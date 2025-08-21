@@ -14,7 +14,10 @@ import java.util.List;
  */
 @WebServlet("/boardlist") //boardlist 요청만 구현
 public class BoardController extends HttpServlet {
-	private static final long serialVersionUID = 1L;
+	private static final int PAGE_GROUP_SIZE = 10;
+	// 게시판 하단에 표시될 현재 글의 갯수로 만들어진 전체 페이지 수
+	// [1] [2] [3] [4] [5] [6] [7] [8] [9] [10]
+	
 	BoardDao boardDao = new BoardDao();   
     /**
      * @see HttpServlet#HttpServlet()
@@ -42,11 +45,25 @@ public class BoardController extends HttpServlet {
 		}
 		
 		List<BoardDto> boardDtos = boardDao.boardList(page);
+		//유저가 선택한 페이지에 해당하는 글 10개를 가져오기
+		
 		int totalPage = (int) Math.ceil((double) totalBoardCount / BoardDao.PAGE_SIZE);
+		
+		int startPage = (((page - 1) / PAGE_GROUP_SIZE) * PAGE_GROUP_SIZE) + 1;
+		int endPage = startPage + PAGE_GROUP_SIZE - 1;
+		
+		 //계산한 endPage값(startPage+9)이 실제 마지막 페이지 값보다 작으면 마지막 페이지값으로 endPage값을 대체
+		if(endPage > totalPage) {
+			endPage = totalPage;
+		}
 		
 		request.setAttribute("boardDtos", boardDtos); //유저가 선택한 페이지에 해당하는 글들(10개씩)
 		request.setAttribute("currentPage", page); //유저가 현재 선택한 페이지 번호
-		request.setAttribute("totalPage", totalPage);
+		request.setAttribute("totalPage", totalPage); //전체 글 갯수로 계산한 전체 페이지 수
+		request.setAttribute("startPage", startPage);
+		request.setAttribute("endPage", endPage);
+		
+		
 		//총 글의 갯수로 표현될 전체 페이지의 수(37개 글이면 4가 전달)
 		
 		RequestDispatcher dispatcher = request.getRequestDispatcher("boardList.jsp");		
