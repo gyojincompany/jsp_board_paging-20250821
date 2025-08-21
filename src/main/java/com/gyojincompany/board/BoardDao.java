@@ -21,8 +21,14 @@ public class BoardDao {
 	PreparedStatement pstmt = null;
 	ResultSet rs = null;
 	
-	public List<BoardDto> boardList() { //게시판 모든 글 리스트를 가져와서 반환하는 메서드
-		String sql = "SELECT * FROM board ORDER BY bnum DESC";
+	private static final int PAGE_SIZE = 10; //페이지 당 출력 글의 갯수
+	
+	public List<BoardDto> boardList(int page) { //게시판 모든 글 리스트를 가져와서 반환하는 메서드
+		//page 값의 페이지에 해당하는 글 번호 계산
+		
+		int offset = (page - 1) * PAGE_SIZE;
+		
+		String sql = "SELECT * FROM board ORDER BY bnum DESC LIMIT ? OFFSET ?";
 		
 		List<BoardDto> bDtos = new ArrayList<BoardDto>();
 		
@@ -32,7 +38,8 @@ public class BoardDao {
 			//커넥션이 메모리 생성(DB와 연결 커넥션 conn 생성)
 			
 			pstmt = conn.prepareStatement(sql); //pstmt 객체 생성(sql 삽입)			
-			
+			pstmt.setInt(1, PAGE_SIZE);
+			pstmt.setInt(2, offset);
 			rs = pstmt.executeQuery(); //모든 글 리스트(모든 레코드) 반환
 			
 			while(rs.next()) {

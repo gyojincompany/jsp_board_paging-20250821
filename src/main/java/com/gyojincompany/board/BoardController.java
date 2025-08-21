@@ -29,7 +29,17 @@ public class BoardController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		List<BoardDto> boardDtos = boardDao.boardList();
+		int page = 1; 
+		//게시판에 페이지 번호 없이 게시판 링크로 접근한 경우 무조건 1페이지의 내용이 출력되어야 함
+		//처음에 보여질 페이지의 번호의 초기값을 1로 초기화
+		if(request.getParameter("page") == null) { //참이면 링크타고 게시판으로 들어온 경우
+			page = 1;
+		} else { //유저가 보고 싶은 페이지 번호를 클릭한 경우
+			page = Integer.parseInt(request.getParameter("page"));
+			//유저가 클릭한 유저가 보고 싶어하는 페이지의 번호
+		}
+		
+		List<BoardDto> boardDtos = boardDao.boardList(page);
 		
 		request.setAttribute("boardDtos", boardDtos);
 		

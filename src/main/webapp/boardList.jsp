@@ -30,5 +30,10 @@
 		</c:forEach>
 	
 	</table>
+	<hr>
+	<a href="boardlist?page=1">1페이지</a> |
+	<a href="boardlist?page=2">2페이지</a> |
+	<a href="boardlist?page=3">3페이지</a> |
+	<a href="boardlist?page=4">4페이지</a>     
 </body>
 </html>
